@@ -10,9 +10,20 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 pytest
 python scripts/run_course_demo.py
+python scripts/run_advanced_demo.py
 ```
 
-完整演示使用固定随机种子的合成数据，因此无需联网。结果会写入 `artifacts/demo/`。合成数据只能验证代码流程，不能用于评价策略是否有效。
+两个演示均使用固定随机种子的合成数据，因此无需联网。入门结果写入
+`artifacts/demo/`，进阶结果默认写入带时间戳的 `artifacts/advanced_*`。合成数据
+只能验证代码流程，不能用于评价策略是否有效。自定义进阶实验可执行：
+
+```bash
+python scripts/run_advanced_demo.py \
+  --config configs/advanced_research.yaml \
+  --output artifacts/my_first_advanced_run
+```
+
+输出目录必须尚不存在，以避免覆盖旧实验。
 
 需要下载 510300 ETF 数据时：
 
@@ -57,8 +68,12 @@ pip install -e ".[data]"
 - `metrics.py`：复利净值、年化指标、Sharpe、回撤与 Calmar。
 - `backtest.py`：信号强制滞后一日，处理成本、停牌和涨跌停。
 - `factors.py`：去极值、标准化、中性化、IC 与分组收益。
-- `ml.py`：训练窗口内拟合预处理器的 walk-forward 岭回归基线。
-- `paper.py`：整数手、最低佣金、印花税、T+1 和成交限制模拟。
+- `fundamentals.py` / `universe.py`：公告日 PIT 对齐与历史时点股票池。
+- `portfolio.py` / `risk.py`：约束组合优化、协方差估计和风险归因。
+- `ml.py` / `validation.py`：可插拔模型、purged/embargo 验证与压力测试。
+- `execution.py` / `paper.py`：容量、冲击、整数手、T+1 和连续模拟盘。
+- `monitor.py`：数据质量、账户对账、漂移和停止规则。
+- `pipeline.py`：配置驱动的第 24 周毕业研究流水线。
 
 ## 研究纪律
 
