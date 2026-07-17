@@ -29,11 +29,14 @@ def to_wide(frame: pd.DataFrame, value: str = "close") -> pd.DataFrame:
 
 
 def make_synthetic_market(
-    n_days: int = 800, n_assets: int = 40, seed: int = 7
+    n_days: int = 800,
+    n_assets: int = 40,
+    seed: int = 7,
+    start_date: str | pd.Timestamp = "2019-01-02",
 ) -> pd.DataFrame:
     """生成可重复的教学数据；仅用于验证代码，不能证明策略有效。"""
     rng = np.random.default_rng(seed)
-    dates = pd.bdate_range("2019-01-02", periods=n_days)
+    dates = pd.bdate_range(start_date, periods=n_days)
     symbols = [f"{600000 + i:06d}.SH" for i in range(n_assets)]
     market = rng.normal(0.0002, 0.009, size=(n_days, 1))
     quality = rng.normal(0.0, 1.0, size=(1, n_assets))
@@ -46,6 +49,7 @@ def make_synthetic_market(
     )
     rows["close"] = prices.reshape(-1)
     rows["volume"] = rng.lognormal(15.0, 0.7, size=len(rows))
+    rows["amount"] = rows["close"] * rows["volume"]
     rows["market_cap"] = (
         np.repeat(rng.lognormal(23.0, 0.8, size=n_assets)[None, :], n_days, axis=0).reshape(-1)
         * (rows["close"].to_numpy() / 20.0)
@@ -56,6 +60,30 @@ def make_synthetic_market(
     rows["limit_up"] = False
     rows["limit_down"] = False
     return rows
+
+
+def make_synthetic_security_master(
+    symbols: list[str],
+    start_date: str | pd.Timestamp = "2018-01-01",
+    delist_every: int | None = None,
+) -> pd.DataFrame:
+    """生成离线股票上市/退市主数据，用于历史股票池流程测试。"""
+
+    if delist_every is not None and delist_every < 1:
+        raise ValueError("delist_every 必须为正数或 None")
+    start = pd.Timestamp(start_date)
+    frame = pd.DataFrame(
+        {
+            "symbol": symbols,
+            "list_date": [start + pd.Timedelta(days=7 * i) for i in range(len(symbols))],
+            "delist_date": pd.NaT,
+        }
+    )
+    if delist_every is not None:
+        selected = np.arange(len(symbols)) % delist_every == delist_every - 1
+        offsets = 365 + np.arange(len(symbols))[selected] * 30
+        frame.loc[selected, "delist_date"] = start + pd.to_timedelta(offsets, unit="D")
+    return frame
 
 
 def fetch_510300(start_date: str, end_date: str) -> pd.DataFrame:

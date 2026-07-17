@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 import numpy as np
 import pandas as pd
 
@@ -109,3 +111,172 @@ def top_quantile_weights(
         selected = valid.nlargest(count).index
         weights.loc[date, selected] = 1.0 / count
     return weights.reindex(scores.index).ffill().fillna(0.0)
+
+
+def earnings_yield(net_profit: pd.Series, market_cap: pd.Series) -> pd.Series:
+    """EP：归母净利润除以信号日总市值。"""
+
+    return net_profit / market_cap.where(market_cap > 0)
+
+
+def book_to_price(book_equity: pd.Series, market_cap: pd.Series) -> pd.Series:
+    """BP：账面权益除以信号日总市值。"""
+
+    return book_equity / market_cap.where(market_cap > 0)
+
+
+def return_on_equity(net_profit: pd.Series, book_equity: pd.Series) -> pd.Series:
+    """ROE：净利润除以账面权益。"""
+
+    return net_profit / book_equity.where(book_equity > 0)
+
+
+def accruals(
+    net_profit: pd.Series,
+    operating_cash_flow: pd.Series,
+    total_assets: pd.Series,
+) -> pd.Series:
+    """总应计项：(净利润 - 经营现金流) / 总资产。"""
+
+    return (net_profit - operating_cash_flow) / total_assets.where(total_assets > 0)
+
+
+def amihud_illiquidity(
+    returns: pd.DataFrame,
+    amount: pd.DataFrame,
+    window: int = 20,
+    min_periods: int | None = None,
+) -> pd.DataFrame:
+    """Amihud 非流动性：窗口内 ``abs(return) / amount`` 的均值。"""
+
+    if window < 1:
+        raise ValueError("window 必须为正数")
+    aligned_return, aligned_amount = returns.align(amount, join="inner")
+    daily = aligned_return.abs() / aligned_amount.where(aligned_amount > 0)
+    return daily.rolling(window, min_periods=min_periods or window).mean()
+
+
+def amihud_from_prices(
+    prices: pd.DataFrame,
+    amount: pd.DataFrame,
+    window: int = 20,
+    min_periods: int | None = None,
+) -> pd.DataFrame:
+    """由收盘价和成交额计算 Amihud 非流动性。"""
+
+    returns = prices.pct_change(fill_method=None)
+    return amihud_illiquidity(returns, amount, window, min_periods)
+
+
+def ic_ir(ic: pd.Series, ddof: int = 1) -> float:
+    """ICIR：有效日 IC 均值除以标准差，不隐含年化。"""
+
+    valid = ic.dropna()
+    std = valid.std(ddof=ddof)
+    if valid.empty or pd.isna(std) or std == 0:
+        return float("nan")
+    return float(valid.mean() / std)
+
+
+def yearly_ic(ic: pd.Series) -> pd.DataFrame:
+    """按自然年汇总 IC 均值、标准差、ICIR 和有效样本数。"""
+
+    if not isinstance(ic.index, pd.DatetimeIndex):
+        raise ValueError("ic 必须使用 DatetimeIndex")
+    grouped = ic.dropna().groupby(ic.dropna().index.year)
+    result = grouped.agg(["mean", "std", "count"])
+    result["icir"] = result["mean"] / result["std"].replace(0, np.nan)
+    result.index.name = "year"
+    return result[["mean", "std", "icir", "count"]]
+
+
+def ic_decay(
+    factor: pd.DataFrame,
+    future_return: pd.DataFrame,
+    max_lag: int = 12,
+) -> pd.Series:
+    """计算信号滞后 0..max_lag 期后的平均 Rank IC 衰减。"""
+
+    if max_lag < 0:
+        raise ValueError("max_lag 不能为负数")
+    values = {
+        lag: rank_ic(factor.shift(lag), future_return).mean()
+        for lag in range(max_lag + 1)
+    }
+    return pd.Series(values, name="mean_rank_ic").rename_axis("lag")
+
+
+def factor_correlation(factors: Mapping[str, pd.DataFrame]) -> pd.DataFrame:
+    """计算多个因子每日横截面 Pearson 相关系数的时间均值。"""
+
+    if not factors:
+        raise ValueError("factors 不能为空")
+    names = list(factors)
+    result = pd.DataFrame(np.eye(len(names)), index=names, columns=names)
+    for left_position, left_name in enumerate(names):
+        for right_name in names[left_position + 1 :]:
+            left, right = factors[left_name].align(factors[right_name], join="inner")
+            daily = left.corrwith(right, axis=1, method="pearson")
+            value = daily.mean()
+            result.loc[left_name, right_name] = value
+            result.loc[right_name, left_name] = value
+    return result
+
+
+def equal_weight_composite(factors: Mapping[str, pd.DataFrame]) -> pd.DataFrame:
+    """按可用因子等权合成；单个缺失值不会污染其他因子。"""
+
+    if not factors:
+        raise ValueError("factors 不能为空")
+    stacked = pd.concat(factors, axis=0, names=["factor"])
+    return stacked.groupby(level=1).mean()
+
+
+def rolling_ic_composite(
+    factors: Mapping[str, pd.DataFrame],
+    future_return: pd.DataFrame,
+    window: int = 60,
+    min_periods: int | None = None,
+) -> pd.DataFrame:
+    """使用历史滚动 IC 加权合成因子，权重滞后一日以杜绝未来信息。
+
+    每日权重为过去窗口内各因子平均 Rank IC，并按绝对值之和归一化。
+    历史不足或权重全零时，合成结果为空。
+    """
+
+    if not factors:
+        raise ValueError("factors 不能为空")
+    if window < 2:
+        raise ValueError("window 必须至少为 2")
+    required = min_periods if min_periods is not None else window
+    if required < 1 or required > window:
+        raise ValueError("min_periods 必须在 [1, window] 内")
+
+    names = list(factors)
+    histories = pd.concat(
+        {name: rank_ic(value, future_return) for name, value in factors.items()},
+        axis=1,
+    )
+    weights = histories.rolling(window, min_periods=required).mean().shift(1)
+    weights = weights.div(weights.abs().sum(axis=1).replace(0, np.nan), axis=0)
+
+    common_index = future_return.index
+    common_columns = future_return.columns
+    total = pd.DataFrame(0.0, index=common_index, columns=common_columns)
+    available_weight = pd.DataFrame(0.0, index=common_index, columns=common_columns)
+    for name in names:
+        values = factors[name].reindex(index=common_index, columns=common_columns)
+        daily_weight = weights[name].reindex(common_index)
+        valid_weight = values.notna().mul(daily_weight.abs(), axis=0)
+        total = total.add(values.mul(daily_weight, axis=0).fillna(0.0), fill_value=0.0)
+        available_weight = available_weight.add(valid_weight, fill_value=0.0)
+    return total.div(available_weight.where(available_weight > 0))
+
+
+# 常用缩写别名，保留清晰的完整名称作为主 API。
+ep_factor = earnings_yield
+bp_factor = book_to_price
+roe_factor = return_on_equity
+accrual_factor = accruals
+icir = ic_ir
+annual_ic = yearly_ic

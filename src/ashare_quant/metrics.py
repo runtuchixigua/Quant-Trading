@@ -54,6 +54,99 @@ def max_drawdown(returns: pd.Series) -> float:
     return float(dd.min()) if not dd.empty else float("nan")
 
 
+def tracking_error(
+    returns: pd.Series,
+    benchmark_returns: pd.Series,
+    periods: int = TRADING_DAYS,
+) -> float:
+    """策略相对基准主动收益的年化标准差。"""
+    aligned = pd.concat(
+        [returns.rename("portfolio"), benchmark_returns.rename("benchmark")], axis=1
+    ).dropna()
+    if len(aligned) < 2:
+        return float("nan")
+    active = aligned["portfolio"] - aligned["benchmark"]
+    return float(active.std(ddof=1) * np.sqrt(periods))
+
+
+def information_ratio(
+    returns: pd.Series,
+    benchmark_returns: pd.Series,
+    periods: int = TRADING_DAYS,
+) -> float:
+    """主动收益均值除以主动风险，并按 periods 年化。"""
+    aligned = pd.concat(
+        [returns.rename("portfolio"), benchmark_returns.rename("benchmark")], axis=1
+    ).dropna()
+    if len(aligned) < 2:
+        return float("nan")
+    active = aligned["portfolio"] - aligned["benchmark"]
+    active_volatility = active.std(ddof=1)
+    if active_volatility <= 0:
+        return float("nan")
+    return float(active.mean() / active_volatility * np.sqrt(periods))
+
+
+def beta(returns: pd.Series, benchmark_returns: pd.Series) -> float:
+    """基于同期简单收益 OLS 斜率计算市场 beta。"""
+    aligned = pd.concat(
+        [returns.rename("portfolio"), benchmark_returns.rename("benchmark")], axis=1
+    ).dropna()
+    if len(aligned) < 2:
+        return float("nan")
+    benchmark_variance = aligned["benchmark"].var(ddof=1)
+    if benchmark_variance <= 0:
+        return float("nan")
+    covariance = aligned["portfolio"].cov(aligned["benchmark"])
+    return float(covariance / benchmark_variance)
+
+
+def active_risk_attribution(
+    portfolio_weights: pd.Series,
+    benchmark_weights: pd.Series,
+    covariance: pd.DataFrame,
+    periods: int = TRADING_DAYS,
+) -> pd.DataFrame:
+    """按资产归因主动风险（tracking error）。
+
+    输入协方差为单期协方差；返回的 tracking_error_contribution 已按
+    ``periods`` 年化，且其和等于年化 tracking error。
+    """
+    if periods <= 0:
+        raise ValueError("periods 必须为正")
+    portfolio, benchmark = portfolio_weights.align(
+        benchmark_weights, join="outer", fill_value=0.0
+    )
+    active = portfolio.astype(float) - benchmark.astype(float)
+    covariance = pd.DataFrame(covariance, dtype=float).reindex(
+        index=active.index, columns=active.index
+    )
+    if covariance.isna().any().any():
+        raise ValueError("协方差矩阵必须覆盖组合与基准中的全部资产")
+    matrix = (covariance.to_numpy() + covariance.to_numpy().T) / 2.0
+    active_array = active.to_numpy()
+    marginal_variance = matrix @ active_array
+    variance = float(active_array @ marginal_variance)
+    if variance <= 0:
+        raise ValueError("主动组合方差必须为正")
+    per_period_error = np.sqrt(variance)
+    contribution = active_array * marginal_variance / per_period_error * np.sqrt(periods)
+    result = pd.DataFrame(
+        {
+            "active_weight": active,
+            "marginal_tracking_error": marginal_variance
+            / per_period_error
+            * np.sqrt(periods),
+            "tracking_error_contribution": contribution,
+            "percent_contribution": active_array * marginal_variance / variance,
+        },
+        index=active.index,
+    )
+    result.attrs["tracking_error"] = per_period_error * np.sqrt(periods)
+    result.attrs["active_variance"] = variance * periods
+    return result
+
+
 def performance_summary(
     returns: pd.Series,
     benchmark_returns: pd.Series | None = None,
@@ -77,6 +170,9 @@ def performance_summary(
         result["annualized_excess_return"] = annualized_return(
             aligned.iloc[:, 0] - aligned.iloc[:, 1]
         )
+        result["tracking_error"] = tracking_error(returns, benchmark_returns)
+        result["information_ratio"] = information_ratio(returns, benchmark_returns)
+        result["beta"] = beta(returns, benchmark_returns)
     if turnover is not None:
         result["average_daily_turnover"] = float(turnover.mean())
         result["annualized_turnover"] = float(turnover.mean() * TRADING_DAYS)

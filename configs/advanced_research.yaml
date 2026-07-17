@@ -1,6 +1,12 @@
-start_date: "2019-01-02"
-end_date: "2022-01-25"
-seed: 7
+# 第 13–24 周离线毕业流水线配置。合成数据只验证流程，不代表策略有效。
+start_date: "2020-01-02"
+end_date: "2022-04-20"
+seed: 17
+
+data:
+  source: synthetic
+  n_days: 600
+  n_assets: 40
 
 universe:
   min_listing_days: 60
@@ -10,12 +16,7 @@ universe:
 factors:
   amihud_window: 20
   ic_window: 60
-  decay_lags: 12
-
-data:
-  source: synthetic
-  n_days: 600
-  n_assets: 40
+  decay_lags: 10
 
 portfolio:
   max_weight: 0.05

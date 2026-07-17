@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ashare-quant-course"
 version = "0.1.0"
-description = "A reproducible 12-week A-share quantitative trading course"
+description = "A reproducible 24-week A-share quantitative trading course"
 requires-python = ">=3.10"
 dependencies = [
   "numpy>=1.26",
@@ -17,6 +17,7 @@ dependencies = [
 
 [project.optional-dependencies]
 data = ["akshare>=1.14"]
+ml = ["lightgbm>=4.0"]
 dev = ["pytest>=8.0", "ruff>=0.5"]
 
 [tool.setuptools.packages.find]
