@@ -1,0 +1,26 @@
+data:
+  source: synthetic
+  start: "2019-01-02"
+  adjusted_price: true
+
+universe:
+  minimum_listing_days: 60
+  exclude_st: true
+  exclude_suspended: true
+
+strategy:
+  rebalance: monthly
+  top_quantile: 0.20
+  maximum_single_weight: 0.05
+
+backtest:
+  execution_lag: 1
+  commission: 0.0003
+  stamp_duty: 0.0005
+  slippage: 0.0005
+
+validation:
+  label_horizon_dates: 20
+  min_train_dates: 252
+  train_window_dates: 504
+  retrain_every: 20

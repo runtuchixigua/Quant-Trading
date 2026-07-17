@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+build/
+dist/
+
+# Virtual environments and secrets
+.venv/
+venv/
+.env
+.env.*
+
+# Tests, coverage and tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Generated research outputs and local datasets
+artifacts/
+data/raw/
+data/processed/
+models/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+*.swp
