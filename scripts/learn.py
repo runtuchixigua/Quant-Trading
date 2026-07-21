@@ -94,7 +94,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         print(f"\n{summary.to_string()}")
     destination = getattr(result, "output", args.output)
     print(f"\n实验目录：{destination}")
-    print("请完成 homework.md，并按 acceptance_checklist.md 逐项验收。")
+    print("请先阅读实验目录中的 GUIDE.md，再完成作业并按清单逐项验收。")
 
 
 if __name__ == "__main__":

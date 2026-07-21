@@ -66,21 +66,31 @@ pip install -e ".[data]"
 
 ## 24 周课程入口
 
-课程分为 12 周入门阶段与 12 周进阶阶段。每周依次阅读对应章节，完成实验、作业和量化验收；每次实验都应保留配置、指标、图表和结论，不覆盖旧结果。
+课程分为 12 周入门阶段与 12 周进阶阶段。每周运行后，先读
+`artifacts/learning/weekNN/GUIDE.md`，再读下方对应的静态讲义。`GUIDE.md`
+解释本次运行真实生成的文件、路径和检查顺序；静态讲义解释理论、字段语义、实验方法
+和常见误区。两者职责不同，不要跳过其中之一。
+
+运行成功得到 `completed` 只代表实验程序完成，不等于作业和验收已被审阅；
+完成 `homework.md`、按 `acceptance.json` 验收并经人工审阅后才是 `reviewed`。
+每次实验都应保留配置、指标、图表和结论，不覆盖旧结果。
 
 ### 第 1–12 周：入门
 
 - [入门课程手册](docs/course.md)
 - [入门研究日志模板](docs/research_log_template.md)
-- 第 1–2 周：依次执行 `python scripts/learn.py 1`、`python scripts/learn.py 2`，
-  学习收益、风险、复权与 A 股交易制度。
-- 第 3–5 周：依次执行周次 `3`、`4`、`5`，完成无未来函数回测、交易成本和
-  成交约束实验。
-- 第 6–8 周：依次执行周次 `6`、`7`、`8`，完成因子预处理、IC、分组检验和
-  组合构建实验。
-- 第 9–10 周：依次执行周次 `9`、`10`，完成横截面预测、标签隔离和
-  walk-forward 实验。
-- 第 11–12 周：依次执行周次 `11`、`12`，完成模拟成交、运行日志和阶段报告。
+- [第 1 周：收益与风险](docs/lessons/week01.md)
+- [第 2 周：A 股市场机制](docs/lessons/week02.md)
+- [第 3 周：无未来函数回测](docs/lessons/week03.md)
+- [第 4 周：交易成本与成交约束](docs/lessons/week04.md)
+- [第 5 周：回测偏差与稳健性](docs/lessons/week05.md)
+- [第 6 周：因子构造与预处理](docs/lessons/week06.md)
+- [第 7 周：IC 与分组检验](docs/lessons/week07.md)
+- [第 8 周：组合构建与风险约束](docs/lessons/week08.md)
+- [第 9 周：横截面机器学习](docs/lessons/week09.md)
+- [第 10 周：Walk-Forward 与标签隔离](docs/lessons/week10.md)
+- [第 11 周：模拟盘与执行](docs/lessons/week11.md)
+- [第 12 周：阶段验收与研究报告](docs/lessons/week12.md)
 
 每周输出目录均为 `artifacts/learning/weekNN/`；上一周达到 `reviewed` 后再执行
 下一周。第 1 周审阅通过后的明确入口是：
@@ -97,12 +107,18 @@ python scripts/learn.py 2
 - [实验清单规范](docs/experiment_manifest_spec.md)：实验身份、配置、输入、输出与可复现约束。
 - [毕业报告模板](docs/graduation_report_template.md)：完整研究报告与答辩检查表。
 
-进阶阶段路线：
-
-1. 第 13–15 周：依次执行周次 `13`–`15`，完成 point-in-time 数据工程、股票池偏差与事件研究。
-2. 第 16–18 周：依次执行周次 `16`–`18`，完成多因子诊断、风险模型与约束优化。
-3. 第 19–21 周：依次执行周次 `19`–`21`，完成稳健验证、市场状态与机器学习解释。
-4. 第 22–24 周：依次执行周次 `22`–`24`，完成执行容量、组合监控与毕业研究复现。
+- [第 13 周：Point-in-Time 数据工程与可追溯性](docs/lessons/week13.md)
+- [第 14 周：历史股票池、退市与选择偏差](docs/lessons/week14.md)
+- [第 15 周：事件研究与公告效应](docs/lessons/week15.md)
+- [第 16 周：多因子诊断与冗余控制](docs/lessons/week16.md)
+- [第 17 周：风险模型与收益归因](docs/lessons/week17.md)
+- [第 18 周：约束组合优化与估计误差](docs/lessons/week18.md)
+- [第 19 周：嵌套验证、过拟合与统计可信度](docs/lessons/week19.md)
+- [第 20 周：市场状态、压力测试与尾部风险](docs/lessons/week20.md)
+- [第 21 周：机器学习稳定性、漂移与解释](docs/lessons/week21.md)
+- [第 22 周：执行建模、冲击成本与策略容量](docs/lessons/week22.md)
+- [第 23 周：组合监控、模型治理与应急演练](docs/lessons/week23.md)
+- [第 24 周：毕业研究、独立复现与答辩](docs/lessons/week24.md)
 
 每周仍使用 `python scripts/learn.py N`，输出到 `artifacts/learning/weekNN/`，并在
 作业、验收和审阅全部完成后才进入下一周。

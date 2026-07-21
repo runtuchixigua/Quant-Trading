@@ -13,6 +13,25 @@
 `acceptance.json` 验收并经人工审阅后，才是 `reviewed`。上一周达到
 `reviewed` 后再继续，快速运行也不能跳过作业和验收。
 
+每周运行后，先读 `artifacts/learning/weekNN/GUIDE.md`，再读对应的静态讲义。
+`GUIDE.md` 解释本次运行真实生成的文件、路径和检查顺序；静态讲义解释理论、
+字段语义、实验方法和常见误区。本手册只保留阶段路线和要求，不重复整篇讲义。
+
+## 第 1–12 周详细讲义
+
+- [第 1 周：收益与风险](lessons/week01.md)
+- [第 2 周：A 股市场机制](lessons/week02.md)
+- [第 3 周：无未来函数回测](lessons/week03.md)
+- [第 4 周：交易成本与成交约束](lessons/week04.md)
+- [第 5 周：回测偏差与稳健性](lessons/week05.md)
+- [第 6 周：因子构造与预处理](lessons/week06.md)
+- [第 7 周：IC 与分组检验](lessons/week07.md)
+- [第 8 周：组合构建与风险约束](lessons/week08.md)
+- [第 9 周：横截面机器学习](lessons/week09.md)
+- [第 10 周：Walk-Forward 与标签隔离](lessons/week10.md)
+- [第 11 周：模拟盘与执行](lessons/week11.md)
+- [第 12 周：阶段验收与研究报告](lessons/week12.md)
+
 ## 第 1 周：收益与风险
 
 课程唯一入口是项目根目录的以下命令：

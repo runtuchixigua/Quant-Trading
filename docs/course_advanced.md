@@ -11,6 +11,25 @@
 完成 `homework.md`、按 `acceptance.json` 验收并经审阅后才是 `reviewed`。
 上一周达到 `reviewed` 后再继续；快速运行不能替代作业与验收。
 
+每周运行后，先读 `artifacts/learning/weekNN/GUIDE.md`，再读对应的静态讲义。
+`GUIDE.md` 解释本次运行真实生成的文件、路径和检查顺序；静态讲义解释理论、
+字段语义、实验方法和常见误区。本手册只保留阶段路线和要求，不重复整篇讲义。
+
+## 第 13–24 周详细讲义
+
+- [第 13 周：Point-in-Time 数据工程与可追溯性](lessons/week13.md)
+- [第 14 周：历史股票池、退市与选择偏差](lessons/week14.md)
+- [第 15 周：事件研究与公告效应](lessons/week15.md)
+- [第 16 周：多因子诊断与冗余控制](lessons/week16.md)
+- [第 17 周：风险模型与收益归因](lessons/week17.md)
+- [第 18 周：约束组合优化与估计误差](lessons/week18.md)
+- [第 19 周：嵌套验证、过拟合与统计可信度](lessons/week19.md)
+- [第 20 周：市场状态、压力测试与尾部风险](lessons/week20.md)
+- [第 21 周：机器学习稳定性、漂移与解释](lessons/week21.md)
+- [第 22 周：执行建模、冲击成本与策略容量](lessons/week22.md)
+- [第 23 周：组合监控、模型治理与应急演练](lessons/week23.md)
+- [第 24 周：毕业研究、独立复现与答辩](lessons/week24.md)
+
 统一纪律：
 
 - 所有结论优先报告样本外、成本后结果，并同时给出基准与不确定性。
