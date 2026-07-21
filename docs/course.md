@@ -2,24 +2,61 @@
 
 本手册是 24 周课程的入门阶段。完成本阶段并通过第 12 周流程验收后，再进入 [第 13–24 周进阶课程](course_advanced.md)。进阶阶段统一使用 [数据字典](data_dictionary.md)、[进阶研究日志](research_log_advanced.md) 和 [实验清单规范](experiment_manifest_spec.md)，最终按 [毕业报告模板](graduation_report_template.md) 提交成果。
 
+## 统一执行与通关规则
+
+每周在项目根目录运行 `python scripts/learn.py N`，默认输出到
+`artifacts/learning/weekNN/`。`--list` 列出课程，`--status` 查看进度，
+`--quick` 使用快速教学数据，`--force` 重新运行已完成周次，
+`N --mark-reviewed` 将已完成且经审阅的周次标记为 `reviewed`。
+
+`completed` 只表示实验生成成功；完成输出目录内的 `homework.md`、按
+`acceptance.json` 验收并经人工审阅后，才是 `reviewed`。上一周达到
+`reviewed` 后再继续，快速运行也不能跳过作业和验收。
+
 ## 第 1 周：收益与风险
+
+课程唯一入口是项目根目录的以下命令：
+
+```bash
+python scripts/learn.py 1
+```
+
+命令完成后，只处理 `artifacts/learning/week01/` 中的文件。不要提前运行完整回测
+或进阶流水线。详细操作见 [从这里开始](../START_HERE.md)。
+完成作业与验收并标记 `reviewed` 后，第 2 周入口是
+`python scripts/learn.py 2`，输出到 `artifacts/learning/week02/`。
 
 学习简单收益、对数收益和复利。算术平均日收益不能直接代表长期增长率，因为财富按乘法演化，波动会造成复利损耗。完成以下任务：
 
-1. 获取 510300 后复权日线，保留未经修改的原始文件。
-2. 用 `metrics.py` 计算净值、年化收益、波动、Sharpe 和最大回撤。
-3. 对比你自己的公式与模块结果，并检查缺失日期和重复记录。
-4. 记录无风险利率、年化交易日数和复权方式。
+1. 第 1 天：运行离线实验，理解 `daily_data.csv` 的四列。
+2. 第 2–3 天：不用 `metrics.py`，自行计算净值与最大回撤。
+3. 第 4 天：完成收益顺序打乱实验，观察路径风险。
+4. 第 5 天：填写 `homework.md`，记录假设和仍不理解的问题。
+5. 可选：完成离线实验后，再获取 510300 后复权日线重复实验，并保留原始文件。
 
-验收：能解释“总收益相同但路径不同为何最大回撤不同”，以及前复权和后复权各适合什么场景。
+验收：提交 `homework.md` 和自己的计算代码；能解释“总收益相同但路径不同为何最大
+回撤不同”。使用真实数据的同学还需解释前复权和后复权各适合什么场景。
 
 ## 第 2 周：A 股市场机制
+
+执行 `python scripts/learn.py 2`，输出到 `artifacts/learning/week02/`；完成其中
+的作业与验收、经审阅标记 `reviewed` 后再继续。
 
 重点掌握 T+1、100 股整数手、主板/创业板/科创板涨跌幅规则、ST、停牌、除权除息、上市和退市。涨跌停价格不意味着必然成交，回测中的可成交假设必须保守。
 
 任务：制作一份字段字典，至少包含交易日、代码、OHLC、成交量、复权因子、停牌、ST、涨跌停状态和上市日期。逐字段写明来源、发布时间和可用时点。
 
 ## 第 3–5 周：回测
+
+按顺序执行：
+
+```bash
+python scripts/learn.py 3  # artifacts/learning/week03/
+python scripts/learn.py 4  # artifacts/learning/week04/
+python scripts/learn.py 5  # artifacts/learning/week05/
+```
+
+每一周都先完成对应目录中的作业与验收，经审阅标记 `reviewed` 后再运行下一条。
 
 先阅读 `backtest.py` 的时间顺序。某日先由旧持仓获得当日收益，再在收盘执行前一日信号；执行后的持仓从下一日开始产生收益。
 
@@ -35,6 +72,16 @@
 
 ## 第 6–8 周：因子和组合
 
+按顺序执行：
+
+```bash
+python scripts/learn.py 6  # artifacts/learning/week06/
+python scripts/learn.py 7  # artifacts/learning/week07/
+python scripts/learn.py 8  # artifacts/learning/week08/
+```
+
+每一周都先完成对应目录中的作业与验收，经审阅标记 `reviewed` 后再运行下一条。
+
 标准流程是：定义股票池 → 构造原始因子 → 按日去极值 → 行业与市值中性化 → 标准化 → 计算未来收益标签 → IC/分组检验 → 组合约束 → 成本后回测。
 
 建议研究：
@@ -49,6 +96,15 @@
 
 ## 第 9–10 周：机器学习
 
+按顺序执行：
+
+```bash
+python scripts/learn.py 9   # artifacts/learning/week09/
+python scripts/learn.py 10  # artifacts/learning/week10/
+```
+
+每一周都先完成对应目录中的作业与验收，经审阅标记 `reviewed` 后再运行下一条。
+
 把每个交易日的股票视为一个横截面，预测未来固定期限的超额收益或排序。先用 Ridge 作为基线，再考虑 LightGBM/排序模型。
 
 关键约束：
@@ -61,6 +117,16 @@
 验收：保存每次训练截止日、特征列表、模型参数、每日 Rank IC，以及 ML 相对基线的成本后增量。
 
 ## 第 11–12 周：模拟盘
+
+按顺序执行：
+
+```bash
+python scripts/learn.py 11  # artifacts/learning/week11/
+python scripts/learn.py 12  # artifacts/learning/week12/
+```
+
+每一周都先完成对应目录中的作业与验收，经审阅标记 `reviewed` 后再运行下一条；
+第 12 周审阅通过后才进入进阶课程。
 
 每天固定时间运行：
 

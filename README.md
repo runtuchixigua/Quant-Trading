@@ -2,18 +2,49 @@
 
 目标不是展示一条“高收益曲线”，而是建立可信的研究闭环：数据时间点正确、交易约束可解释、验证严格、实验可复现。
 
-## 快速开始
+## 第一次学习：只从这里开始
+
+先阅读 [START_HERE.md](START_HERE.md)，然后执行：
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
+python scripts/learn.py 1
+```
+
+完成 `artifacts/learning/week01/homework.md` 并提交审阅后，再进入第 2 周。
+第一次学习不要运行完整演示，它们是阶段验收工具，不是课程入口。
+
+## 统一学习命令
+
+所有周次都从项目根目录执行 `python scripts/learn.py N`，其中 `N` 为 `1` 到
+`24`。默认输出到 `artifacts/learning/weekNN/`。常用操作：
+
+```bash
+python scripts/learn.py --list             # 列出 24 周课程
+python scripts/learn.py --status           # 查看各周进度
+python scripts/learn.py N --quick           # 使用快速教学数据
+python scripts/learn.py N --force           # 明确重新生成已完成周次的产物
+python scripts/learn.py N --mark-reviewed   # 人工审阅通过后标记 reviewed
+```
+
+运行成功只表示实验已生成，状态为 `completed`；它不表示作业或验收已通过。
+完成该周 `homework.md`、按 `acceptance.json` 验收并提交审阅后，才标记为
+`reviewed` 并继续下一周。`--force` 可能重新生成产物，使用前先确认需要保留的
+实验记录已另行保存；`--quick` 用于缩短教学运行，不替代正式验收。
+
+## 阶段验收命令
+
+完成对应阶段后才使用：
+
+```bash
 pytest
 python scripts/run_course_demo.py
 python scripts/run_advanced_demo.py
 ```
 
-两个演示均使用固定随机种子的合成数据，因此无需联网。入门结果写入
+两个验收演示均使用固定随机种子的合成数据，因此无需联网。入门结果写入
 `artifacts/demo/`，进阶结果默认写入带时间戳的 `artifacts/advanced_*`。合成数据
 只能验证代码流程，不能用于评价策略是否有效。自定义进阶实验可执行：
 
@@ -41,11 +72,22 @@ pip install -e ".[data]"
 
 - [入门课程手册](docs/course.md)
 - [入门研究日志模板](docs/research_log_template.md)
-- 第 1–2 周：收益、风险、复权与 A 股交易制度。
-- 第 3–5 周：无未来函数回测、交易成本、停牌与涨跌停。
-- 第 6–8 周：因子预处理、IC、分组检验和组合构建。
-- 第 9–10 周：横截面预测、标签隔离和 walk-forward。
-- 第 11–12 周：模拟成交、运行日志和研究报告。
+- 第 1–2 周：依次执行 `python scripts/learn.py 1`、`python scripts/learn.py 2`，
+  学习收益、风险、复权与 A 股交易制度。
+- 第 3–5 周：依次执行周次 `3`、`4`、`5`，完成无未来函数回测、交易成本和
+  成交约束实验。
+- 第 6–8 周：依次执行周次 `6`、`7`、`8`，完成因子预处理、IC、分组检验和
+  组合构建实验。
+- 第 9–10 周：依次执行周次 `9`、`10`，完成横截面预测、标签隔离和
+  walk-forward 实验。
+- 第 11–12 周：依次执行周次 `11`、`12`，完成模拟成交、运行日志和阶段报告。
+
+每周输出目录均为 `artifacts/learning/weekNN/`；上一周达到 `reviewed` 后再执行
+下一周。第 1 周审阅通过后的明确入口是：
+
+```bash
+python scripts/learn.py 2
+```
 
 ### 第 13–24 周：进阶
 
@@ -57,10 +99,13 @@ pip install -e ".[data]"
 
 进阶阶段路线：
 
-1. 第 13–15 周：point-in-time 数据工程、股票池偏差与事件研究。
-2. 第 16–18 周：多因子诊断、风险模型与约束优化。
-3. 第 19–21 周：稳健验证、市场状态与机器学习解释。
-4. 第 22–24 周：执行容量、组合监控与毕业研究复现。
+1. 第 13–15 周：依次执行周次 `13`–`15`，完成 point-in-time 数据工程、股票池偏差与事件研究。
+2. 第 16–18 周：依次执行周次 `16`–`18`，完成多因子诊断、风险模型与约束优化。
+3. 第 19–21 周：依次执行周次 `19`–`21`，完成稳健验证、市场状态与机器学习解释。
+4. 第 22–24 周：依次执行周次 `22`–`24`，完成执行容量、组合监控与毕业研究复现。
+
+每周仍使用 `python scripts/learn.py N`，输出到 `artifacts/learning/weekNN/`，并在
+作业、验收和审阅全部完成后才进入下一周。
 
 ## 模块
 

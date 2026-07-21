@@ -4,6 +4,13 @@
 
 进阶阶段的目标不是继续堆叠策略，而是把研究升级为可审计、可复现、可证伪的工程流程。每周均需更新 [进阶研究日志](research_log_advanced.md)，每个正式实验均需建立符合 [实验清单规范](experiment_manifest_spec.md) 的 manifest，并引用 [数据字典](data_dictionary.md) 中的字段定义。
 
+每周统一执行 `python scripts/learn.py N`，默认输出到
+`artifacts/learning/weekNN/`。可用 `--list` 列出课程、`--status` 查看进度、
+`--quick` 快速运行、`--force` 重新生成已完成周次，并在人工审阅通过后执行
+`python scripts/learn.py N --mark-reviewed`。`completed` 只表示实验运行完成；
+完成 `homework.md`、按 `acceptance.json` 验收并经审阅后才是 `reviewed`。
+上一周达到 `reviewed` 后再继续；快速运行不能替代作业与验收。
+
 统一纪律：
 
 - 所有结论优先报告样本外、成本后结果，并同时给出基准与不确定性。
@@ -13,6 +20,9 @@
 - 未通过数据质量、时间对齐或复现检查的结果，不进入策略比较。
 
 ## 第 13 周：Point-in-Time 数据工程与可追溯性
+
+执行 `python scripts/learn.py 13`，输出到 `artifacts/learning/week13/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
 
 ### 理论要点
 
@@ -53,6 +63,9 @@
 
 ## 第 14 周：历史股票池、退市与选择偏差
 
+执行 `python scripts/learn.py 14`，输出到 `artifacts/learning/week14/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
+
 ### 理论要点
 
 - 幸存者偏差、回看偏差和样本选择偏差会系统性抬高历史表现。
@@ -91,6 +104,9 @@
 - 退市与长期停牌样本处理覆盖率 100%，无静默丢弃记录。
 
 ## 第 15 周：事件研究与公告效应
+
+执行 `python scripts/learn.py 15`，输出到 `artifacts/learning/week15/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
 
 ### 理论要点
 
@@ -131,6 +147,9 @@
 
 ## 第 16 周：多因子诊断与冗余控制
 
+执行 `python scripts/learn.py 16`，输出到 `artifacts/learning/week16/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
+
 ### 理论要点
 
 - 因子有效性包括覆盖、稳定性、方向、单调性、独立性和交易可实现性。
@@ -169,6 +188,9 @@
 - 最终保留因子均有可解释的边际贡献；淘汰决策可由日志复核。
 
 ## 第 17 周：风险模型与收益归因
+
+执行 `python scripts/learn.py 17`，输出到 `artifacts/learning/week17/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
 
 ### 理论要点
 
@@ -209,6 +231,9 @@
 
 ## 第 18 周：约束组合优化与估计误差
 
+执行 `python scripts/learn.py 18`，输出到 `artifacts/learning/week18/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
+
 ### 理论要点
 
 - 均值—方差优化对预期收益和协方差误差极敏感；最优解常是估计误差的放大器。
@@ -247,6 +272,9 @@
 - 与简单基线相比，复杂方法只有在成本后样本外指标改善时才可晋级。
 
 ## 第 19 周：嵌套验证、过拟合与统计可信度
+
+执行 `python scripts/learn.py 19`，输出到 `artifacts/learning/week19/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
 
 ### 理论要点
 
@@ -287,6 +315,9 @@
 
 ## 第 20 周：市场状态、压力测试与尾部风险
 
+执行 `python scripts/learn.py 20`，输出到 `artifacts/learning/week20/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
+
 ### 理论要点
 
 - 市场状态可由波动、趋势、流动性、信用或宏观变量定义，但状态定义本身也可能过拟合。
@@ -325,6 +356,9 @@
 - 联合压力下的损失、现金缺口和约束违规均可逐项对账。
 
 ## 第 21 周：机器学习稳定性、漂移与解释
+
+执行 `python scripts/learn.py 21`，输出到 `artifacts/learning/week21/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
 
 ### 理论要点
 
@@ -365,6 +399,9 @@
 
 ## 第 22 周：执行建模、冲击成本与策略容量
 
+执行 `python scripts/learn.py 22`，输出到 `artifacts/learning/week22/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
+
 ### 理论要点
 
 - 显性成本之外还有买卖价差、延迟、市场冲击和机会成本。
@@ -404,6 +441,9 @@
 
 ## 第 23 周：组合监控、模型治理与应急演练
 
+执行 `python scripts/learn.py 23`，输出到 `artifacts/learning/week23/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后再继续。
+
 ### 理论要点
 
 - 生产监控覆盖数据、特征、模型、组合、执行、风险和基础设施七层。
@@ -442,6 +482,9 @@
 - 持仓、现金、订单和成交每日对账差异为 0，或有审批后的解释。
 
 ## 第 24 周：毕业研究、独立复现与答辩
+
+执行 `python scripts/learn.py 24`，输出到 `artifacts/learning/week24/`；完成其中的
+作业与验收、经审阅标记 `reviewed` 后，才完成课程结业流程。
 
 ### 理论要点
 
